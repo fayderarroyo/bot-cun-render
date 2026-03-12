@@ -26,27 +26,15 @@ const conversationState = {};
 
 // --- Configuración del Bot ---
 const client = new Client({
-    // authStrategy: new LocalAuth(), // Desactivamos Auth temporalmente para ahorrar RAM y Disco
+    authStrategy: new LocalAuth(), // Ahora sí activamos la sesión persistente
     puppeteer: {
         headless: true,
-        handleSIGINT: false,
-        handleSIGTERM: false,
-        handleSIGHUP: false,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
             '--no-zygote',
-            '--single-process',
-            '--disable-gpu',
-            '--disable-canvas-aa',
-            '--disable-2d-canvas-clip-aa',
-            '--disable-gl-drawing-for-tests',
-            '--disable-images', // No cargar imágenes ahorra mucha RAM
-            '--key-total-cache-size=0',
-            '--disk-cache-size=0'
+            '--disable-gpu'
         ],
         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null
     }
