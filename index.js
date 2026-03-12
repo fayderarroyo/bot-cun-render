@@ -13,6 +13,7 @@ app.use(express.json()); // Permite recibir datos en formato JSON
 const PORT = process.env.PORT || 3001; // Render asigna el puerto dinámicamente
 
 let isBotReady = false; // Variable para saber si el bot ya cargó
+let isBotActive = true; // Interruptor maestro para pausar/activar la IA
 
 // ==========================================
 // CONFIGURACIÓN DE IA (GEMINI)
@@ -72,6 +73,12 @@ client.on('ready', () => {
 
 client.on('message', async (msg) => {
     if (msg.from === 'status@broadcast') return;
+    
+    // Si el bot está pausado, ignoramos el procesamiento de IA
+    if (!isBotActive) {
+        console.log(`[Bot] IA Pausada comercialmente. Ignorando mensaje de ${msg.from}`);
+        return;
+    }
 
     let number;
     try {
@@ -272,7 +279,15 @@ ESTE BLOQUE DEBE ESTAR AL FINAL EXACTAMENTE CON ESAS LLAVES DEL JSON FORMATO ARR
 
 // 1. Ruta para comprobar si el bot está vivo
 app.get('/status', (req, res) => {
-    res.json({ ready: isBotReady });
+    res.json({ ready: isBotReady, active: isBotActive });
+});
+
+// Ruta para apagar/encender el bot remotamente
+app.post('/toggle-bot', (req, res) => {
+    const { active } = req.body;
+    isBotActive = active;
+    console.log(`[Bot] El motor de IA ha sido ${isBotActive ? 'ACTIVADO' : 'DESACTIVADO'} remotamente.`);
+    res.json({ success: true, active: isBotActive });
 });
 
 // 2. Ruta para ENVIAR mensajes (La que usará tu Micrositio)
