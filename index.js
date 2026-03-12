@@ -132,7 +132,7 @@ ESTE BLOQUE DEBE ESTAR AL FINAL EXACTAMENTE CON ESAS LLAVES DEL JSON FORMATO ARR
                 } else {
                     const dynamicGenAI = new GoogleGenerativeAI(sessionApiKey);
                     const sessionModel = dynamicGenAI.getGenerativeModel({
-                        model: 'gemini-2.5-flash',
+                        model: 'gemini-1.5-flash',
                         systemInstruction: finalInstruction
                     });
 
