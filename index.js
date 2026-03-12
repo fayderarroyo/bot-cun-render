@@ -290,7 +290,8 @@ app.post('/send-message', async (req, res) => {
     }
 
     try {
-        const chatId = `${number}@c.us`;
+        const cleanNumber = number.toString().replace(/\D/g, ''); // Quita el '+' y cualquier otro carácter que no sea número
+        const chatId = `${cleanNumber}@c.us`;
 
         // Enviamos el mensaje inicial!
         await client.sendMessage(chatId, message);
