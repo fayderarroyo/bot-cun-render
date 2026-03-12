@@ -10,7 +10,7 @@ const path = require('path');
 const app = express();
 app.use(cors()); // Permite que tu micrositio Next.js se comunique con esta API
 app.use(express.json()); // Permite recibir datos en formato JSON
-const PORT = 3001; // Usaremos el puerto 3001 para no chocar con Next.js (que usa el 3000)
+const PORT = process.env.PORT || 3001; // Render asigna el puerto dinámicamente
 
 let isBotReady = false; // Variable para saber si el bot ya cargó
 
@@ -43,17 +43,33 @@ const client = new Client({
     }
 });
 
+console.log('[Bot] Inicializando cliente de WhatsApp...');
+client.initialize().catch(err => console.error('[Bot] Error fatal en inicialización:', err));
+
 client.on('qr', (qr) => {
     console.log('----------------------------------------------------');
-    console.log('¡ATENCIÓN! Si no puedes escanear el código de abajo, abre este link:');
+    console.log('¡NUEVO CÓDIGO QR GENERADO!');
+    console.log('Si no puedes escanear el código de abajo, abre este link:');
     console.log(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`);
     console.log('----------------------------------------------------');
     qrcode.generate(qr, { small: true });
 });
 
+client.on('loading_screen', (percent, message) => {
+    console.log('[Bot] Cargando WhatsApp Web:', percent, '% -', message);
+});
+
+client.on('authenticated', () => {
+    console.log('[Bot] ¡Autenticado con éxito! ✅');
+});
+
+client.on('auth_failure', msg => {
+    console.error('[Bot] Fallo de autenticación:', msg);
+});
+
 client.on('ready', () => {
     console.log('----------------------------------------------------');
-    console.log('¡Conexión exitosa! ✅ El bot está listo.');
+    console.log('¡TODO LISTO! ✅ El bot está operando.');
     isBotReady = true;
 });
 
@@ -253,7 +269,7 @@ ESTE BLOQUE DEBE ESTAR AL FINAL EXACTAMENTE CON ESAS LLAVES DEL JSON FORMATO ARR
 });
 
 // Iniciamos el bot
-client.initialize();
+// El inicio se movio arriba con logs decorativos
 
 // --- Rutas de la API (El "teléfono rojo") ---
 
