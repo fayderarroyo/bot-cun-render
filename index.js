@@ -292,6 +292,11 @@ app.post('/toggle-bot', (req, res) => {
 
 // 2. Ruta para ENVIAR mensajes (La que usará tu Micrositio)
 app.post('/send-message', async (req, res) => {
+    // Si el bot está en pausa, no permitimos envíos manuales
+    if (!isBotActive) {
+        return res.status(403).json({ error: 'El bot está pausado. Actívalo en el Dashboard para enviar.' });
+    }
+
     // Si el bot aún no inicia, no podemos enviar
     if (!isBotReady) {
         return res.status(503).json({ error: 'El bot aún no está listo. Espera un momento.' });
