@@ -45,7 +45,9 @@ const client = new Client({
 
 client.on('qr', (qr) => {
     console.log('----------------------------------------------------');
-    console.log('Escanea este QR con tu WhatsApp:');
+    console.log('¡ATENCIÓN! Si no puedes escanear el código de abajo, abre este link:');
+    console.log(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`);
+    console.log('----------------------------------------------------');
     qrcode.generate(qr, { small: true });
 });
 
